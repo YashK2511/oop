@@ -1,0 +1,94 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+class Item {
+    string name;
+    int price;
+
+public:
+    int id;
+
+    void read() {
+        cout << "\nEnter id: ";
+        cin >> id;
+        cout << "Enter name: ";
+        cin >> name;
+        cout << "Enter price: ";
+        cin >> price;
+    }
+
+    void display() {
+        cout << "\n\nId: " << id;
+        cout << "\nName: " << name;
+        cout << "\nPrice: " << price;
+    }
+};
+
+int main() {
+    Item t;
+    int i, n;
+    int ch, sch;
+    ofstream fout;
+    ifstream fin;
+    char choice;
+
+    do {
+        cout << "1. Read data\n2. Display data\n3. Append data of one item\n4. Search";
+        cout << "\nEnter choice: ";
+        cin >> ch;
+
+        switch (ch) {
+            case 1:
+                fout.open("items.txt");
+                cout << "Enter number of items you want to add: ";
+                cin >> n;
+                for (i = 0; i < n; i++) {
+                    t.read();
+                    fout.write((char*)&t, sizeof(t));
+                }
+                fout.close();
+                break;
+
+            case 2:
+                fin.open("items.txt");
+                while (fin.read((char*)&t, sizeof(t))) {
+                    t.display();
+                }
+                fin.close();
+                break;
+
+            case 3:
+                t.read();
+                fout.open("items.txt", ios::app );
+                fout.write((char*)&t, sizeof(t));
+                fout.close();
+                break;
+
+            case 4:
+                fin.open("items.txt");
+                cout << "Enter the id to search: ";
+                cin >> sch;
+                int flag = 0;
+                while (fin.read((char*)&t, sizeof(t))) {
+                    if (t.id == sch) {
+                        t.display();
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 0) {
+                    cout << "Item not found." << endl;
+                }
+                fin.close();
+                break;       
+        }
+
+        cout << "\nDo you want to continue (y/n): ";
+        cin >> choice;
+    } while (choice == 'y');
+
+    return 0;
+}
